@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './ques.dart';
+import './ans.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,45 +16,65 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   var questionIndex = 0;
-  var answerIndex = 0;
   void onPressed() {
     setState(() {
       questionIndex = questionIndex + 1;
-      answerIndex = answerIndex + 1;
+      //answerIndex = answerIndex + 1;
     });
   }
 
-  List<String> questions = [
-    'What is your favorite color?',
-    'Who is your favourite actor?',
-    'What sport do you like the most?'
+  void reset() {
+    setState(() {
+      questionIndex = 0;
+    });
+  }
+
+  List questions = [
+    {
+      'ques': 'What is your favorite color?',
+      'ans': ['Red', 'Blue', 'Black', 'Green']
+    },
+    {
+      'ques': 'Who is your favourite actor?',
+      'ans': ['Ranveer Singh', 'Vicky Kaushal', 'Siddharth Malhotra']
+    },
+    {
+      'ques': 'What sport do you like the most?',
+      'ans': ['Badminton', 'Cricket', 'Basketball']
+    }
   ];
 
-  List answers = [
-    ['Red', 'Blue', 'Black'],
-    ['Ranveer Singh', 'Vicky Kaushal', 'Siddharth Malhotra'],
-    ['Badminton', 'Cricket', 'Basketball']
-  ];
-  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Quiz'),
-        ),
-        body: Column(
-          children: [
-            Question(questions[questionIndex]),
-            ElevatedButton(
-                onPressed: onPressed, child: Text(answers[answerIndex][0])),
-            ElevatedButton(
-                onPressed: onPressed, child: Text(answers[answerIndex][1])),
-            ElevatedButton(
-                onPressed: onPressed, child: Text(answers[answerIndex][2])),
-          ],
-        ),
-      ),
-    );
+        home: Scaffold(
+            appBar: AppBar(
+              title: const Text('Quiz'),
+            ),
+            body: (questionIndex < questions.length)
+                ? Column(
+                    children: [
+                      Question(questions[questionIndex]['ques']),
+                      ...(questions[questionIndex]['ans']).map((answer) {
+                        return Answer(onPressed, answer);
+                      }).toList(),
+                    ],
+                  )
+                : Center(
+                    child: Column(children: [
+                      const Text(
+                        'Thanks for sharing!',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      TextButton(
+                        onPressed: reset,
+                        child: const Text('Reset Quiz'),
+                      )
+                    ]),
+                  )));
   }
 }
